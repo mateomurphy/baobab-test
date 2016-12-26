@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import connect from '../connect'
+import connect from '../connectors'
 import * as actions from '../actions'
 
 class List extends Component {

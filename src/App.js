@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {root} from 'baobab-react/higher-order'
+import {root} from './connectors.js'
 import Dispatcher from './Dispatcher'
 import tree from './state'
 
@@ -13,4 +13,4 @@ class App extends Component {
   }
 }
 
-export default root(tree, App)
+export default root(dispatcher, App)
