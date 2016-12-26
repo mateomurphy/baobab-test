@@ -8,6 +8,7 @@
   "dependencies": {
     "baobab": "^2.3.4",
     "baobab-react": "^2.1.2",
+    "is-class": "^0.0.4",
     "react": "^15.4.1",
     "react-dom": "^15.4.1"
   },

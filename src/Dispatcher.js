@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import isClass from 'is-class'
 
 export default class Dispatcher {
   constructor(state) {
@@ -11,24 +12,27 @@ export default class Dispatcher {
     // todo. middleware?
     console.log(`called ${key}`)
 
+    let parts = key.split('.')
+    let method = parts.pop()
+    let namespace = parts.join('.')
+
+    if (_.isObject(this.handlers[namespace])) {
+      return this.handlers[namespace][method](...payload)
+    }
+
     return this.handlers[key].call(this, ...payload)
   }
 
   route(key, handler) {
     if (_.isFunction(handler)) {
-      console.log(`${key} is function`, handler)
+      if (isClass(handler)) {
+        return this.routeClass(key, handler)
+      }
+
       return this.routeFunction(key, handler)
     }
 
     if (_.isObject(handler)) {
-      let proto = Object.getPrototypeOf(handler)
-
-      console.log(`${key} is object: proto`, proto)
-
-      if (proto) {
-        console.log(`proto`, Object.getOwnPropertyNames(proto))
-      }
-
       Object.getOwnPropertyNames(handler).forEach(method => {
         if (method[0] !== '_') {
           this.routeFunction(`${key}.${method}`, handler[method])
@@ -37,9 +41,18 @@ export default class Dispatcher {
 
       return
     }
+  }
 
-    console.log(handler)
+  routeClass(key, handler) {
+    let instance = new handler(this.state)
 
+    this.handlers[key] = instance
+
+    Object.getOwnPropertyNames(Object.getPrototypeOf(instance)).forEach(method => {
+      if (method !== 'constructor') {
+        this.makeAction(`${key}.${method}`)
+      }
+    })
   }
 
   routeFunction(key, handler) {

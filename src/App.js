@@ -5,28 +5,33 @@ import tree from './state'
 
 import List from './components/List'
 
-class Actions {
+class Controller {
+  constructor(state) {
+    this.state = state
+  }
+}
+
+class Actions extends Controller {
   test(payload) {
     return payload
   }
 }
-
-let actions = new Actions()
 
 let test = function(payload) { return payload }
 let tests = { test }
 
 let dispatcher = new Dispatcher(tree)
 
-//dispatcher.route('test', test)
+dispatcher.route('test', test)
 dispatcher.route('tests', tests)
-//dispatcher.route('test_class', Actions)
-dispatcher.route('test_instance', actions)
+dispatcher.route('test_class', Actions)
 
-//console.log(dispatcher.handlers)
+//console.log(dispatcher.actions)
 
 //console.log(dispatcher.actions.test('hello'))
 //console.log(dispatcher.actions.tests.test('bye'))
+dispatcher.actions.test_class.test('good!')
+
 
 class App extends Component {
   render() {
