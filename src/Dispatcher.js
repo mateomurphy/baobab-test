@@ -10,7 +10,6 @@ export default class Dispatcher {
 
   dispatch({key, payload}) {
     // todo. middleware?
-    console.log(`called ${key}`)
 
     let parts = key.split('.')
     let method = parts.pop()
@@ -20,7 +19,7 @@ export default class Dispatcher {
       return this.handlers[namespace][method](...payload)
     }
 
-    return this.handlers[key].call(this, ...payload)
+    return this.handlers[key].call(this, this.state, ...payload)
   }
 
   route(key, handler) {
