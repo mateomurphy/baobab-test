@@ -49,17 +49,17 @@ export default class Dispatcher {
 
     Object.getOwnPropertyNames(Object.getPrototypeOf(instance)).forEach(method => {
       if (method !== 'constructor') {
-        this.makeAction(`${key}.${method}`)
+        this.createHelper(`${key}.${method}`)
       }
     })
   }
 
   routeFunction(key, handler) {
     this.handlers[key] = handler
-    this.makeAction(key)
+    this.createHelper(key)
   }
 
-  makeAction(key) {
+  createHelper(key) {
     let parts = key.split('.')
     let method = parts.pop()
     let root = this.actions
