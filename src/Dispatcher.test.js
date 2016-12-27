@@ -7,8 +7,6 @@ let test = function(state, payload) {
   return payload
 }
 
-let tests = { test }
-
 class Actions extends Controller {
   test(payload) {
     return payload
@@ -17,9 +15,11 @@ class Actions extends Controller {
 
 const dispatcher = new Dispatcher({state})
 
-dispatcher.route('test', test)
-dispatcher.route('tests', tests)
-dispatcher.route('test_class', Actions)
+dispatcher.route({
+  test: test,
+  tests: { test },
+  test_class: Actions
+})
 
 it('contains handlers', () => {
   let result = _.keys(dispatcher.handlers)

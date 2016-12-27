@@ -22,24 +22,24 @@ export default class Dispatcher {
     return this.handlers[key].call(this, this.state, ...payload)
   }
 
-  route(key, handler) {
-    if (_.isFunction(handler)) {
-      if (isClass(handler)) {
-        return this.routeClass(key, handler)
+  route(config = {}, namespace = null) {
+    _.each(config, (handler, key) => {
+      if (namespace) {
+        key = `${namespace}.${key}`
       }
 
-      return this.routeFunction(key, handler)
-    }
-
-    if (_.isObject(handler)) {
-      Object.getOwnPropertyNames(handler).forEach(method => {
-        if (method[0] !== '_') {
-          this.routeFunction(`${key}.${method}`, handler[method])
+      if (_.isFunction(handler)) {
+        if (isClass(handler)) {
+          return this.routeClass(key, handler)
         }
-      })
 
-      return
-    }
+        return this.routeFunction(key, handler)
+      }
+
+      if (_.isObject(handler)) {
+        return this.route(handler, key)
+      }
+    })
   }
 
   routeClass(key, handler) {
