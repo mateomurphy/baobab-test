@@ -6,12 +6,20 @@ const makeError = Baobab.helpers.makeError
 
 const dispatcherShape = (props, propName) => {
   if (!(propName in props)) {
-    return
+    return;
   }
 
   if (!(props[propName] instanceof Dispatcher)) {
-    return new Error('Not a Dispatcher')
+    return new Error('Not a Dispatcher');
   }
+}
+
+const baobabShape = (props, propName) => {
+  if (!(propName in props))
+    return;
+
+  if (!(props[propName] instanceof Baobab))
+    return new Error('Not a Baobab tree');
 }
 
 function displayName(Component) {
@@ -47,7 +55,8 @@ export function root(dispatcher, Component) {
     // Handling child context
     getChildContext() {
       return {
-        dispatcher
+        dispatcher,
+        tree: dispatcher.state
       };
     }
 
@@ -59,7 +68,8 @@ export function root(dispatcher, Component) {
 
   ComposedComponent.displayName = 'Rooted' + name;
   ComposedComponent.childContextTypes = {
-    dispatcher: dispatcherShape
+    dispatcher: dispatcherShape,
+    tree: baobabShape
   };
 
   return ComposedComponent;
