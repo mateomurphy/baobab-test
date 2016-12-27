@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 
-import connect from '../connectors'
-import * as actions from '../actions'
+import {branch} from '../connectors'
 
 class List extends Component {
   constructor(props, context) {
@@ -47,8 +46,7 @@ class List extends Component {
 }
 
 // Subscribing to the relevant data in the tree
-export default connect(
-  actions,
+export default branch(
   {
     colors: ['colors']
   },
