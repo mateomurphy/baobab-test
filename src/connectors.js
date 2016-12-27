@@ -5,8 +5,6 @@ import Dispatcher from './Dispatcher'
 const makeError = Baobab.helpers.makeError
 
 const dispatcherShape = (props, propName) => {
-  console.log(props, propName)
-
   if (!(propName in props)) {
     return
   }
@@ -86,14 +84,17 @@ export function branch(cursors, Component) {
     constructor(props, context) {
       super(props, context);
 
+      this.dispatcher = this.context.dispatcher;
+
       if (cursors) {
         const mapping = solveMapping(cursors, props, context);
 
-        if (!mapping)
+        if (!mapping) {
           invalidMapping(name, mapping);
+        }
 
         // Creating the watcher
-        this.watcher = this.context.tree.watch(mapping);
+        this.watcher = this.dispatcher.state.watch(mapping);
 
         // Hydrating initial state
         this.state = this.watcher.get();
@@ -102,9 +103,6 @@ export function branch(cursors, Component) {
 
     // On component mount
     componentWillMount() {
-
-      // Creating dispatcher
-      this.dispatcher = (fn, ...args) => fn(this.context.tree, ...args);
 
       if (!this.watcher)
         return;
@@ -119,7 +117,7 @@ export function branch(cursors, Component) {
 
     // Render shim
     render() {
-      const suppl = {dispatch: this.dispatcher};
+      const suppl = this.dispatcher.actions;
 
       return <Component {...this.props} {...suppl} {...this.state} ref={this.handleChildRef.bind(this)} />;
     }
@@ -152,7 +150,7 @@ export function branch(cursors, Component) {
 
   ComposedComponent.displayName = 'Branched' + name;
   ComposedComponent.contextTypes = {
-    tree: dispatcherShape
+    dispatcher: dispatcherShape
   };
 
   return ComposedComponent;
