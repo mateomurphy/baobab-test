@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import branch from '../connect'
+import {branch} from '../connect'
 
 class List extends Component {
   constructor(props, context) {
